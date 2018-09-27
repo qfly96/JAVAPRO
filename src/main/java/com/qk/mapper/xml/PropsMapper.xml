@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qk.mapper.PropsMapper">
+  <resultMap id="BaseResultMap" type="com.qk.model.Props">
+    <id column="props_id" jdbcType="VARCHAR" property="propsId" />
+    <result column="props_name" jdbcType="VARCHAR" property="propsName" />
+    <result column="props_role" jdbcType="VARCHAR" property="propsRole" />
+    <result column="props_level" jdbcType="VARCHAR" property="propsLevel" />
+    <result column="props_describe" jdbcType="VARCHAR" property="propsDescribe" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    props_id, props_name, props_role, props_level, props_describe
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from props
+    where props_id = #{propsId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectAllProps" resultMap="BaseResultMap">
+  	SELECT<include refid="Base_Column_List"></include> from props
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from props
+    where props_id = #{propsId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.qk.model.Props">
+    insert into props (props_id, props_name, props_role, 
+      props_level, props_describe)
+    values (#{propsId,jdbcType=VARCHAR}, #{propsName,jdbcType=VARCHAR}, #{propsRole,jdbcType=VARCHAR}, 
+      #{propsLevel,jdbcType=VARCHAR}, #{propsDescribe,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.qk.model.Props">
+    insert into props
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="propsId != null">
+        props_id,
+      </if>
+      <if test="propsName != null">
+        props_name,
+      </if>
+      <if test="propsRole != null">
+        props_role,
+      </if>
+      <if test="propsLevel != null">
+        props_level,
+      </if>
+      <if test="propsDescribe != null">
+        props_describe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="propsId != null">
+        #{propsId,jdbcType=VARCHAR},
+      </if>
+      <if test="propsName != null">
+        #{propsName,jdbcType=VARCHAR},
+      </if>
+      <if test="propsRole != null">
+        #{propsRole,jdbcType=VARCHAR},
+      </if>
+      <if test="propsLevel != null">
+        #{propsLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="propsDescribe != null">
+        #{propsDescribe,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qk.model.Props">
+    update props
+    <set>
+      <if test="propsName != null">
+        props_name = #{propsName,jdbcType=VARCHAR},
+      </if>
+      <if test="propsRole != null">
+        props_role = #{propsRole,jdbcType=VARCHAR},
+      </if>
+      <if test="propsLevel != null">
+        props_level = #{propsLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="propsDescribe != null">
+        props_describe = #{propsDescribe,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where props_id = #{propsId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qk.model.Props">
+    update props
+    set props_name = #{propsName,jdbcType=VARCHAR},
+      props_role = #{propsRole,jdbcType=VARCHAR},
+      props_level = #{propsLevel,jdbcType=VARCHAR},
+      props_describe = #{propsDescribe,jdbcType=VARCHAR}
+    where props_id = #{propsId,jdbcType=VARCHAR}
+  </update>
+</mapper>

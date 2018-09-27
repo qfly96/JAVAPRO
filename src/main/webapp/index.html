@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>装备列表</title>
+<link rel="stylesheet" href="css/bootstrap3/css/bootstrap.min.css">
+</head>
+
+<body>
+	<div class="container">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<a class="navbar-brand" href="index.html">装备列表</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse"
+					id="bs-example-navbar-collapse-1">
+					<div class="navbar-form navbar-left">
+						<div class="form-group">
+							<input type="text" name="propsName" class="form-control" id="propsName"
+								placeholder="请输入装备名">
+							<input type="text" name="propsRole" id="propsRole"
+								class="form-control" placeholder="请输入装备类别"> 
+							<input type="text" name="propsLevel" class="form-control" id="propsLevel"
+								placeholder="请输入等级">
+							<input type="text" name="propsDescribe" class="form-control" id="propsDescribe"
+								placeholder="请输入描述">
+						</div>
+						<button class="btn btn-default" onclick="insertProps()">新增</button>
+						<a href="javascript:void(0)" class="btn btn-default" onclick="removePropsByCheck()">批量删除</a>
+				</div>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
+		</nav>
+		
+		<span id="result"></span>		
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>NAME</th>
+							<th>ROLE</th>
+							<th>LEVEL</th>
+							<th>DESCRIBE</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="PropListBox">					
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="css/bootstrap3/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	
+	$(function () {
+		showPropList();
+	});
+
+	function insertProps() {
+		var propsName = $("#propsName").val();
+		var propsRole = $("#propsRole").val();
+		var propsLevel = $("#propsLevel").val();
+		var propsDescribe = $("#propsDescribe").val();
+		$.ajax({
+			url:"insertProp.ajax",
+			type:"POST",
+			data:{
+				propsName:propsName,
+				propsRole:propsRole,
+				propsLevel:propsLevel,
+				propsDescribe:propsDescribe
+			},
+			dataType:"text",
+			success:function(res){
+				if (res == "SUCCESS") {
+					successAlert();
+				}else if (res == "ERROR") {
+					errorAlert();
+				}
+				showPropList();
+			},
+			error:function(){
+				alert("请求失败！");
+			} 
+		});	
+	}
+	
+	function removePropsByCheck() {
+		var idArry = [];
+		$("input:checkbox[name='ids']:checked").each(function() { // 遍历name=ids的多选框
+			idArry.push($(this).val());  // 每一个被选中项的值
+			});
+		$.ajax({
+			url:"removePropByCheckedAjax.ajax",
+			type:"POST",
+			data:{
+				idArry:idArry,
+			},
+			dataType:"text",
+			success:function(res){
+				if (res == "SUCCESS") {
+					successAlert();
+				}else if (res == "ERROR") {
+					errorAlert();
+				}
+				showPropList();
+			},
+			error:function(){
+				alert("请求失败！");
+			}
+		});
+	}
+	
+	function removeProps(Id) {
+		$.ajax({
+			url:"removePropByAjax.ajax",
+			type:"POST",
+			data:{propsId:Id},
+			dataType:"text",
+			success:function(res){
+				if (res == "SUCCESS") {
+					successAlert();
+				}else if (res == "ERROR") {
+					errorAlert();
+				}
+				showPropList();
+			},
+			error:function(){
+				alert("请求失败！");
+			}
+		});
+	}
+	function showPropList() {
+		$.ajax({
+			url:"showPropsByAjax.ajax",
+			type:"POST",
+			dataType:"text",
+			success:function(res){
+				$("#PropListBox").html("");
+			var json = eval("("+res+")");
+			for (var i = 0; i < json.length; i++) {
+				$("#PropListBox").append("<tr><td><input type='checkbox' name='ids' value="+json[i].propsId+"/>"+json[i].propsId+"</td><td>"+json[i].propsName+"</td><td>"+json[i].propsRole+"</td><td>"+json[i].propsLevel+"</td><td>"+json[i].propsDescribe+"</td><td><a href='javascript:void(0)' class='btn' onclick='removeProps("+'"'+json[i].propsId+'"'+")'><span></span>删除</a></td></tr>");
+			}
+			},	
+			error:function(){
+				alert("请求失败！");
+			}
+		});
+	}
+	
+	function successAlert() {
+		$("#result").html("<div class='alert alert-success' role='alert'>提示：操作成功<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+				+"<span aria-hidden='true'>&times;</span></button></div>");
+	}
+	
+	function errorAlert() {
+		$("#result").html("<div class='alert alert-danger' role='alert'>警告：操作失败<button type='button' class='close' data-dismiss='alert' aria-label='Close'>"
+				+"<span aria-hidden='true'>&times;</span></button></div>");
+	}
+	
+</script>
+</html>
